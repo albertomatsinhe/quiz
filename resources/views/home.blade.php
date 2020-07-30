@@ -27,7 +27,7 @@
                     </div>
                 </div>
             </div>
-            <a href="{{ route('tests.index') }}" class="btn btn-success">Responder ao Quiz!</a>
+            <a href="{{ route('testss.index') }}" class="btn btn-success">Responder ao Quiz!</a>
         </div>
     </div>
 @endsection
