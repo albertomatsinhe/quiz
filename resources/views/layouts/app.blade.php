@@ -1,69 +1,130 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
-<head>
-    @include('partials.head')
-</head>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{ Session::get('company_name') }} | {{ucfirst(trans("message.sidebar.$menu"))}}</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta name="_token" content="{!! csrf_token() !!}" />
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" href="{{ asset('public/bootstrap/css/bootstrap.min.css') }}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('public/bootstrap/css/font-awesome.min.css') }}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="{{ asset('public/bootstrap/css/ionicons.min.css') }}">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ asset('public/plugins/datatables/dataTables.bootstrap.css') }}">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('public/plugins/select2/select2.min.css') }}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{{ asset('public/dist/css/AdminLTE.min.css') }}">
 
-<body class="page-header-fixed">
+    <link rel="stylesheet" href="{{ asset('public/dist/css/skins/_all-skins.min.css') }}">
+    <!-- Date Picker -->
+    <link rel="stylesheet" href="{{ asset('public/plugins/datepicker/datepicker3.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/dist/css/jquery-ui.min.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('public/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}"
+      type="text/css" />
+    <link rel="stylesheet" href="{{ asset('public/dist/css/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/dist/css/bootstrap-confirm-delete.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/toastr/toastr.min.css') }}">
+    {{-- <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet"> --}}
+    <link rel='shortcut icon' href="{{URL::to('/')}}/favicon.ico" type='image/x-icon' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ asset('public/js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('public/js/moment.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('public/js/daterangepicker.min.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ asset('public/dist/css/daterangepicker.css') }}" />
+     @yield('jscript')
+    <style>
+      /* html {
+      zoom: 90%;
+    }  */
 
-    @include('partials.analytics')
+      .table.table-bordered.dataTable {
+        zoom: 0.8;
+      }
+      
+        @page {
+              size: auto;   /* auto is the initial value */
+          margin: 0;  /* this affects the margin in the printer settings */
+        }
+      /* body { zoom: 90%; } */
+    </style>
+  </head>
 
-    <div class="page-header navbar navbar-fixed-top">
-        @include('partials.header')
+  <body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper" id="app">
+      <input type="text" id="Url_geral" value="{{url('')}}" name="" hidden="">
+      <input type="text" id="envio_fuel" value="{{url("")}}" name="" hidden="">
+      
+      @include('layouts.includes.header')
+      <!-- Left side column. contains the logo and sidebar -->
+
+      @include('layouts.includes.sidebar')
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        @include('layouts.includes.notifications')
+
+        {{-- @include('layouts.includes.breadcrumb') --}}
+
+        @yield('content')
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+      @include('layouts.includes.footer')
+
+      <!-- Control Sidebar -->
+      @include('layouts.includes.sidebar_right')
+      <!-- /.control-sidebar -->
+      <!-- Add the sidebar's background. This div must be placed
+       immediately after the control sidebar -->
+      <div class="control-sidebar-bg"></div>
     </div>
+    <!-- ./wrapper -->
+    @include('layouts.includes.script')
+    @yield('js')
+    <!-- js -->
 
-    <div class="clearfix"></div>
+    <script type="text/javascript" src="{{ asset('public/toastr/toastr.min.js') }}"></script>
+    {{-- <script type="text/javascript" src="{{ asset('public/graficos/jquery.canvasjs.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('public/graficos/jquery-1.11.1.min.js') }}"></script> --}}
+    {{--
+    <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+    <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+ --}}
 
-    <div class="page-container">
-        <div class="page-sidebar-wrapper">
-            @include('partials.sidebar')
-        </div>
+    <script type="text/javascript">
+      var SITE_URL = "{{URL::to('/')}}"; 
+    </script>
 
-        <div class="page-content-wrapper">
-            <div class="page-content">
+    <script>
+      @if(Session::has('message'))
 
-                @if(isset($siteTitle))
-                    <h3 class="page-title">
-                        {{ $siteTitle }}
-                    </h3>
-                @endif
+    var type = "{{ Session::get('alert-type', 'info') }}";
+    switch(type){
+        case 'info':
+            toastr.info("{{ Session::get('message') }}");
+            break;
+        
+        case 'warning':
+            toastr.warning("{{ Session::get('message') }}");
+            break;
 
-                <div class="row">
-                    <div class="col-md-12">
+        case 'success':
+            toastr.success("{{ Session::get('message') }}");
+            break;
 
-                        @if (Session::has('message'))
-                            <div class="note note-info">
-                                <p>{{ Session::get('message') }}</p>
-                            </div>
-                        @endif
-                        @if ($errors->count() > 0)
-                            <div class="note note-danger">
-                                <ul class="list-unstyled">
-                                    @foreach($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
+        case 'error':
+            toastr.error("{{ Session::get('message') }}");
+            break;
+    }
+  @endif
+    </script>
 
-                        @yield('content')
+  </body>
 
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="scroll-to-top"
-         style="display: none;">
-        <i class="fa fa-arrow-up"></i>
-    </div>
-
-    {!! Form::open(['route' => 'auth.logout', 'style' => 'display:none;', 'id' => 'logout']) !!}
-        <button type="submit">Logout</button>
-    {!! Form::close() !!}
-
-    @include('partials.javascripts')
-</body>
 </html>

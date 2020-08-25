@@ -1,69 +1,39 @@
 <?php
+
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Hash;
-use Mail;
 
-/**
- * Class User
- *
- * @package App
- * @property string $name
- * @property string $email
- * @property string $password
- * @property string $role
- * @property string $remember_token
-*/
+
+
 class User extends Authenticatable
 {
-    use SoftDeletes, Notifiable;
-
-    protected $fillable = ['name', 'email', 'password', 'remember_token', 'role_id'];
-
-    public static function boot()
-    {
-        parent::boot();
-
-        User::observe(new \App\Observers\UserActionsObserver);
-    }
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'real_name', 'email', 'role_id', 'password',
+    ];
 
     /**
-     * Hash password
-     * @param $input
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
      */
-    public function setPasswordAttribute($input)
-    {
-        if ($input) {
-            $this->attributes['password'] = app('hash')->needsRehash($input) ? Hash::make($input) : $input;
-        }
-    }
-
+    protected $hidden = [
+        'password',
+    ];
 
     /**
-     * Set to null if empty
-     * @param $input
+     * Login required validation
+     *
+     * @var array
      */
-    public function setRoleIdAttribute($input)
-    {
-        $this->attributes['role_id'] = $input ? $input : null;
-    }
-
-    public function role()
-    {
-        return $this->belongsTo(Role::class, 'role_id')->withTrashed();
-    }
-
-    public function isAdmin()
-    {
-        foreach ($this->role()->get() as $role) {
-            if ($role->id == 1) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    public static $login_validation_rule = [
+        'email' => 'required|email|exists:users',
+        'password' => 'required',
+        //'company' => 'required'
+    ];
 }

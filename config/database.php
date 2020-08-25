@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'fetch' => PDO::FETCH_OBJ,
+    'fetch' => PDO::FETCH_CLASS,
 
     /*
     |--------------------------------------------------------------------------
@@ -53,6 +53,9 @@ return [
         ],
 
         'mysql' => [
+            'dump_command_path' => env('DB_DUMP_COMMAND_PATH'),
+            'dump_command_timeout' => 60 * 5, // 5 minute timeout
+            'dump_using_single_transaction' => true, // perform dump using a single transaction
             'driver' => 'mysql',
             'host' => env('DB_HOST', 'localhost'),
             'port' => env('DB_PORT', '3306'),
@@ -62,9 +65,19 @@ return [
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
-            'strict' => true,
+            'strict' => false,
             'engine' => null,
         ],
+
+        'tenant' => array(
+            'driver'   => 'mysql',
+            'host'     => '',
+            'database' => '',
+            'username' => '',
+            'password' => '',
+            'prefix'   => '',
+            'collation' => 'utf8_unicode_ci',
+        ),
 
         'pgsql' => [
             'driver' => 'pgsql',
@@ -76,7 +89,6 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'schema' => 'public',
-            'sslmode' => 'prefer',
         ],
 
     ],
